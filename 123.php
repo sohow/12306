@@ -82,4 +82,20 @@ class train {
     }
 }
 
+/*
+ * HZH 杭州东
+ * ARH 鳌江
+ */
+if(PHP_SAPI == 'cli' && isset($argv[0]) && $argv[0] == basename(__FILE__) ) {
+    var_dump($argv);
+    train::$query_date = $argv[1];//出发时间
+    if(isset($argv[2])){
+        train::$from_station = $argv[2];//出发站
+    }
+    if(isset($argv[3])){
+        train::$to_station = $argv[3];//终点站
+    }
+}
 train::main();
+
+
