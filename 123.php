@@ -110,7 +110,12 @@ class train {
 
     public static function waring($msg)
     {
-        exec("gnome-terminal -x bash -c \"date;echo 有票啦 {$msg}; read;\"");
+        $os = strtolower(PHP_OS);
+    	if($os == "darwin"){
+		exec('osascript -e \'display notification "'.$msg.'" sound name "Glass.aiff" with title "有票啦"\'');
+    	}elseif($os == "linux"){
+		exec("gnome-terminal -x bash -c \"date;echo 有票啦 {$msg}; read;\"");
+    	}
         exit;
     }
 
