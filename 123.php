@@ -5,7 +5,7 @@
  * Email: zongwen1@staff.weibo.com
  * Time: 上午10:28
  */
-include_once ("../Tool/Http.php");
+include_once ("Tool/Http.php");
 
 class train {
 
@@ -48,13 +48,11 @@ class train {
             }
         }
 
-        //var_dump(self::$from_station_code,self::$to_station_code,self::$query_date);
-
         if (empty(self::$from_station_code) ||
             empty(self::$to_station_code) ||
             empty(self::$query_date)) {
-            $usage = "请输入参数:\n-f\t出发地 \n-t\t目的地 \n-d\t出发日,如2016-01-06 \n";
-            self::show($usage);
+            $usage = "请输入参数:\n-f\t出发地,如北京 \n-t\t目的地,如郓城 \n-d\t出发日,如2016-01-06 \n";
+	    self::show($usage);
             exit;
         }
     }
