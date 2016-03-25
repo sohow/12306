@@ -57,16 +57,18 @@ class Douban {
     {
         $fp1 = fopen('echo_ids_fp_topic_id.txt','a+');
         $fp2 = fopen('echo_ids_fp_uid.txt','a+');
-        self::$echo_ids = json_decode(fgets($fp1),true);
-        self::$echo_uids = json_decode(fgets($fp2),true);
+        $str = fgets($fp1);
+        self::$echo_ids = json_decode(substr($str,0,strlen($str)-1),true);
+        $str = fgets($fp2);
+        self::$echo_uids = json_decode(substr($str,0,strlen($str)-1),true);
         fclose($fp1);
         fclose($fp2);
     }
 
     public static function finish()
     {
-        $fp1 = fopen('echo_ids_fp_topic_id.txt','a+');
-        $fp2 = fopen('echo_ids_fp_uid.txt','a+');
+        $fp1 = fopen('echo_ids_fp_topic_id.txt','w+');
+        $fp2 = fopen('echo_ids_fp_uid.txt','w+');
         fputs($fp1,json_encode(self::$echo_ids));
         fputs($fp2,json_encode(self::$echo_uids));
         fclose($fp1);
