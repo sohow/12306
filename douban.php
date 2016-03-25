@@ -32,7 +32,7 @@ class Douban {
                             self::$echo_ids[$topic['id']] = 1;
                             self::$echo_uids[$topic['author']['id']] = 1;
                             $topic_info = self::get_detail($topic['id']);
-                            echo sprintf("title: %s\tkey: %s\turl: %s\n%s\n\n", $topic['title'], $key, $topic['url'],$topic_info['content']);
+                            echo sprintf("title: %s\tkey: %s\tuid: %s\turl: %s\n%s\n\n", $topic['title'], $key, $topic['author']['id'],$topic['url'],$topic_info['content']);
 
                         }
                     }
@@ -55,18 +55,22 @@ class Douban {
 
     public static function init()
     {
-        $fp = fopen('echo_ids_fp.txt','a+');
-        self::$echo_ids = json_decode(fgets($fp),true);
-        self::$echo_uids = json_decode(fgets($fp),true);
-        fclose($fp);
+        $fp1 = fopen('echo_ids_fp_topic_id.txt','a+');
+        $fp2 = fopen('echo_ids_fp_uid.txt','a+');
+        self::$echo_ids = json_decode(fgets($fp1),true);
+        self::$echo_uids = json_decode(fgets($fp2),true);
+        fclose($fp1);
+        fclose($fp2);
     }
 
     public static function finish()
     {
-        $fp = fopen('echo_ids_fp.txt','w+');
-        fputs($fp,json_encode(self::$echo_ids));
-        fputs($fp,json_encode(self::$echo_uids));
-        fclose($fp);
+        $fp1 = fopen('echo_ids_fp_topic_id.txt','a+');
+        $fp2 = fopen('echo_ids_fp_uid.txt','a+');
+        fputs($fp1,json_encode(self::$echo_ids));
+        fputs($fp2,json_encode(self::$echo_uids));
+        fclose($fp1);
+        fclose($fp2);
     }
 }
 
