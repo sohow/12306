@@ -20,6 +20,7 @@ class Helper_Http
             CURLOPT_HEADER=>$needheader
         );
 
+        //$header=array('Content-type: text/plain', 'Content-length: 100')
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt_array($ch, $opt);
         $result = curl_exec($ch);
@@ -50,6 +51,7 @@ class Helper_Http
             CURLOPT_HEADER=>$needheader
         );
 
+        //$header=array('Content-type: text/plain', 'Content-length: 100')
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt_array($ch, $opt);
         $result = curl_exec($ch);
