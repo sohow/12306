@@ -222,7 +222,7 @@ class train {
                 if (!isset(self::$ticket_hash[$ticket])) {
                     self::error("无效车座: {$ticket}");
                 }
-                self::$limit_ticket_list[] = self::$ticket_hash[$ticket];
+                self::$limit_ticket_list[$ticket] = self::$ticket_hash[$ticket];
             }
         }
         else {
