@@ -19,6 +19,8 @@ class train {
     public static $station = array();
     public static $limit_train_list = array();      //指定车次
     public static $limit_ticket_list = array();     //指定车座
+	public static $limit_search_num = -1;     //指定车座
+	public static $email = array();     //指定车座
     public static $ticket_hash = array(
         '商务座'       =>  'swz_num',
         '特等座'       =>  'tz_num',
@@ -68,7 +70,8 @@ class train {
             } else {
                 var_dump($restul);
             }
-        } while (true);
+			self::$limit_search_num > 0 && self::$limit_search_num--;
+        } while (self::$limit_search_num != 0);
     }
 
     public static function do_query($train_list)
@@ -80,6 +83,7 @@ class train {
         foreach ($train_list as $item) {
 			$tickets = $item['queryLeftNewDTO'];
             $msg = self::show_list($tickets);
+			self::change($msg);
             $ticket = self::has_ticket($tickets);
             if ($ticket) {
                 self::waring($msg);
@@ -160,6 +164,17 @@ class train {
         return false;
     }
 
+    public static function change($new) {
+    	if (empty(self::$email)) {
+    		return;
+		}
+		static $old = null;
+		if ($old && $new != $old) {
+			self::send_mail($new);
+		}
+		$old = $new;
+	}
+
     public static function waring($msg)
     {
         $os = strtolower(PHP_OS);
@@ -188,7 +203,7 @@ class train {
 
     public static function init_param()
     {
-        $args = getopt('f:t:d:m:n:o');
+        $args = getopt('f:t:d:m:n:o:e:c:');
 
         //出发地,目的地,出发日
         if (isset($args['f']) && isset($args['t']) && isset($args['d'])) {
@@ -227,6 +242,16 @@ class train {
         else {
             self::$limit_ticket_list = self::$ticket_hash;
         }
+
+		//指定提醒邮箱
+		if (isset($args['e'])) {
+			self::$email = explode(',',$args['e']);
+		}
+
+        //指定查询次数
+		if (isset($args['c'])) {
+			self::$limit_search_num = $args['c'];
+		}
     }
 
     public static function coding($str)
@@ -240,7 +265,7 @@ class train {
 
     public static function usage()
     {
-        $usage = "请输入参数:\n-f\t出发地,如北京 \n-t\t目的地,如郓城 \n-d\t出发日,如2016-01-06 \n-m\t车次,如k1901(多个车次用逗号分割) \n-n\t车座,如硬卧,硬座(多个车座用逗号分割) \n";
+        $usage = "请输入参数:\n-f\t出发地,如北京 \n-t\t目的地,如郓城 \n-d\t出发日,如2016-01-06 \n-m\t车次,如k1901(多个车次用逗号分割) \n-n\t车座,如硬卧,硬座(多个车座用逗号分割) \n-e\t接收提醒的邮箱\n-c\t查询次数";
         self::error($usage);
     }
 
@@ -270,6 +295,17 @@ class train {
     {
         echo "{$msg}\n";
     }
+
+    public static function send_mail($msg)
+	{
+		foreach (self::$email as $to) {
+			$subject = "sohow@12306";
+			$message = $msg;
+			$from = "sohow@12306.com";
+			$headers = "From: {$from}";
+			mail($to, $subject, $message, $headers);
+		}
+	}
 }
 
 train::main();
