@@ -49,12 +49,12 @@ class train {
 
     public static function query($query_date,$from_station,$to_station)
     {
-        $url = 'https://kyfw.12306.cn/otn/lcxxcx/query?';
+        $url = 'https://kyfw.12306.cn/otn/leftTicket/query?';
         $param = array(
-            'purpose_codes' =>  'ADULT',
-            'queryDate'     =>  $query_date,
-            'from_station'  =>  $from_station,
-            'to_station'    =>  $to_station,
+            'leftTicketDTO.train_date'     =>  $query_date,
+            'leftTicketDTO.from_station'  =>  $from_station,
+            'leftTicketDTO.to_station'    =>  $to_station,
+			'purpose_codes' =>  'ADULT',
         );
         $url .= http_build_query($param);
 
@@ -62,7 +62,8 @@ class train {
             $restul = Helper_Http::get($url);
             $rt = json_decode($restul, true);
             if (isset($rt['status']) && $rt['status']) {
-                self::do_query($rt['data']['datas']);
+				$train_list = self::b2($rt['data']['result'], $rt['data']['map']);
+                self::do_query($train_list);
             } else if (isset($rt['messages'])) {
                 var_dump($rt['messages']);
             } else {
@@ -78,8 +79,9 @@ class train {
         }
         self::show_title();
         foreach ($train_list as $item) {
-            $msg = self::show_list($item);
-            $ticket = self::has_ticket($item);
+			$tickets = $item['queryLeftNewDTO'];
+            $msg = self::show_list($tickets);
+            $ticket = self::has_ticket($tickets);
             if ($ticket) {
                 self::waring($msg);
             }
@@ -89,17 +91,70 @@ class train {
     public static function filter_train($train_list)
     {
         foreach ($train_list as $k=>$train) {
-            if (!in_array($train['station_train_code'],self::$limit_train_list)) {
-                unset($train_list[$k]);
-            }
-        }
+        	if (!isset(self::$limit_train_list[$train['queryLeftNewDTO']['station_train_code']])) {
+				unset($train_list[$k]);
+			}
+		}
         return $train_list;
+    }
+
+	public static function b2($cp, $cr) {
+		$co = array();
+		$count = count($cp);
+		for ($cn = 0; $cn < $count; $cn++) {
+			$cm = explode("|", $cp[$cn]);
+			$cs = array();
+			$cs["secretStr"] = $cm[0];
+			$cs["buttonTextInfo"] = $cm[1];
+			$cq = array();
+			$cq['train_no'] = $cm[2];
+			$cq['station_train_code'] = $cm[3];
+			$cq['start_station_telecode'] = $cm[4];
+			$cq['end_station_telecode'] = $cm[5];
+			$cq['from_station_telecode'] = $cm[6];
+			$cq['to_station_telecode'] = $cm[7];
+			$cq['start_time'] = $cm[8];
+			$cq['arrive_time'] = $cm[9];
+			$cq['lishi'] = $cm[10];
+			$cq['canWebBuy'] = $cm[11];
+			$cq['yp_info'] = $cm[12];
+			$cq['start_train_date'] = $cm[13];
+			$cq['train_seat_feature'] = $cm[14];
+			$cq['location_code'] = $cm[15];
+			$cq['from_station_no'] = $cm[16];
+			$cq['to_station_no'] = $cm[17];
+			$cq['is_support_card'] = $cm[18];
+			$cq['controlled_train_flag'] = $cm[19];
+			$cq['gg_num'] = $cm[20] ? $cm[20] : "--";
+			$cq['gr_num'] = $cm[21] ? $cm[21] : "--";
+			$cq['qt_num'] = $cm[22] ? $cm[22] : "--";
+			$cq['rw_num'] = $cm[23] ? $cm[23] : "--";
+			$cq['rz_num'] = $cm[24] ? $cm[24] : "--";
+			$cq['tz_num'] = $cm[25] ? $cm[25] : "--";
+			$cq['wz_num'] = $cm[26] ? $cm[26] : "--";
+			$cq['yb_num'] = $cm[27] ? $cm[27] : "--";
+			$cq['yw_num'] = $cm[28] ? $cm[28] : "--";
+			$cq['yz_num'] = $cm[29] ? $cm[29] : "--";
+			$cq['ze_num'] = $cm[30] ? $cm[30] : "--";
+			$cq['zy_num'] = $cm[31] ? $cm[31] : "--";
+			$cq['swz_num'] = $cm[32] ? $cm[32] : "--";
+			$cq['srrb_num'] = $cm[33] ? $cm[33] : "--";
+			$cq['yp_ex'] = $cm[34];
+			$cq['seat_types'] = $cm[35];
+			$cq['from_station_name'] = $cr[$cm[6]];
+			$cq['to_station_name'] = $cr[$cm[7]];
+			$cs['queryLeftNewDTO'] = $cq;
+			$co[] = $cs;
+        }
+        return $co;
     }
 
     public static function has_ticket($tickets)
     {
         foreach (self::$limit_ticket_list as $ticket) {
-            if (is_numeric($tickets[$ticket]) && $tickets[$ticket] > 0) {
+        	if ($tickets[$ticket] == '有') {
+				return $ticket;
+			} else if (is_numeric($tickets[$ticket]) && $tickets[$ticket] > 0) {
                 return $ticket;
             }
         }
@@ -157,6 +212,7 @@ class train {
             foreach ($trains as $train) {
                 self::$limit_train_list[] = strtoupper($train);
             }
+			self::$limit_train_list = array_flip(self::$limit_train_list);
         }
 
         //指定车座
@@ -199,8 +255,8 @@ class train {
     public static function show_list($tickets)
     {
         $msg = $tickets['station_train_code'];
-        foreach (self::$limit_ticket_list as $ticket) {
-            $msg .= "\t{$tickets[$ticket]}";
+        foreach (self::$limit_ticket_list as $seat_name=>$ticket) {
+            $msg .= "  {$seat_name}:{$tickets[$ticket]}";
         }
         self::show($msg);
         return $msg;
