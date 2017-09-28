@@ -19,23 +19,23 @@ class Cron {
 		do {
 			$result = Helper_Http::get(self::LOGIN_URL . self::LOGIN_SEC);
 			$result = json_decode($result, true);
-			print_r($result);
+			//print_r($result);
 			$token = $result['token'];
 		} while (!$token && $try--);
 
 		$result = Helper_Http::get(self::SIGN_URL . $token);
 		$result = json_decode($result, true);
-		print_r($result);
+		//print_r($result);
 
 		$result = Helper_Http::get(self::COUPONS_URL . $token);
 		$result = json_decode($result, true);
-		print_r($result);
+		//print_r($result);
 		if (is_array($result['coupon'])) {
 			foreach ($result['coupon'] as $coupon) {
 				if (isset($coupon['id'])) {
-					Helper_Http::get(self::EXCHANGE_URL . $token . "&couponId=" . $coupon['id']);
+					$result = Helper_Http::get(self::EXCHANGE_URL . $token . "&couponId=" . $coupon['id']);
 					$result = json_decode($result, true);
-					print_r($result);
+					//print_r($result);
 				}
 			}
 		}
