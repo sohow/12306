@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * Author: 韩宗稳
+ * Author: sohow.cc
  * Time: 上午10:28
  */
 //exp: php 123.php -f 北京 -t 郓城 -d 2016-02-06 -m k1901 -n 硬座
