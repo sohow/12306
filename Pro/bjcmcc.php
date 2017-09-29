@@ -10,7 +10,8 @@ class Cron {
 	const LOGIN_SEC = '';
 
 	const LOGIN_URL = 'https://mobilebj.cn/app/websitepwdLogin?ver=bjservice_and_5.4.0&ef=';
-	const SIGN_URL = 'http://mobilebj.cn:12065/app/querySignInfo?token=';
+	const QUERY_SIGN_URL = 'http://mobilebj.cn:12065/app/querySignInfo?token=';
+	const SIGN_URL = 'http://mobilebj.cn:12065/app/signIn?token=';
 	const COUPONS_URL = 'http://mobilebj.cn:12065/app/queryEffCoupon?token=';
 	const EXCHANGE_URL = 'http://mobilebj.cn:12065/app/exchangeCoupon?token=';
 
