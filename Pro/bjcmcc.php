@@ -19,14 +19,71 @@ class Cron {
     const QUERY_TIME = 'http://sc.bj.chinamobile.com/rwtx/task!queryPrizeTimes.do?token=';
     const GET_PRIZE = 'http://sc.bj.chinamobile.com/rwtx/task!doPrize.do?token=';
 
-	public static function start() {
-		$try = 3;
+	const MS_COOKIE_URL = 'http://221.179.131.140/bjcss-route/forward.do?id=31&token=';
+	const MS_LL_G1 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001145';
+	const MS_LL_M100 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001266';
+
+	static $_ms_cookie = '';
+	static $_token = '';
+
+	// http://service.bj.10086.cn/sk2/app/ll/querySkList.action
+	// http://221.179.131.140/bjcss-route/forward.do?id=31&token=6248a0a7dbb16fd4e07571c5317dd66e
+
+
+	public static function prize($token) {
+        $result = Helper_Http::get(self::SHAR_URL . $token);
+        $result = json_decode($result, true);
+        print_r($result);
+        $result = Helper_Http::get(self::GET_PRIZE . $token);
+        $result = json_decode($result, true);
+        print_r($result);
+    }
+
+    public static function get_token() {
+		if (empty(self::$_token)) {
+			$try = 3;
+			do {
+				$result = Helper_Http::get(self::LOGIN_URL . self::LOGIN_SEC);
+				$result = json_decode($result, true);
+				print_r($result);
+				$token = $result['token'];
+			} while (!$token && $try--);
+			self::$_token = $token;
+		}
+		return self::$_token;
+	}
+
+    public static function get_ms_cookie() {
+    	if (empty(self::$_ms_cookie)) {
+			$token = self::get_token();
+			$need_header = array('Location');
+			Helper_Http::get_with_header(self::MS_COOKIE_URL . $token, array(), $need_header);
+			if (!empty($need_header['Location'])) {
+				$need_header2 = array('Set-Cookie');
+				Helper_Http::get_with_header(trim($need_header['Location']), array(), $need_header2);
+				print_r($need_header2);
+				$t = time() . '101';
+				$need_header2['Set-Cookie'] .= "WT_FPC=id=205b248d3dc44c83968{$t}:lv={$t}:ss={$t}; ";
+				self::$_ms_cookie = array('Cookie: ' . $need_header2['Set-Cookie']);
+			}
+		}
+		return self::$_ms_cookie;
+	}
+
+	public static function ms($url) {
+		$cookie = self::get_ms_cookie();
+		$count = 200;
 		do {
-			$result = Helper_Http::get(self::LOGIN_URL . self::LOGIN_SEC);
-			$result = json_decode($result, true);
-			print_r($result);
-			$token = $result['token'];
-		} while (!$token && $try--);
+			$i = 10;
+			do {
+				Helper_Http::get($url, $cookie);
+			} while ($i--);
+			sleep(1);
+		} while ($count--);
+	}
+
+	public static function sign() {
+		$token = self::get_token();
 
 		$result = Helper_Http::get(self::SIGN_URL . $token);
 		$result = json_decode($result, true);
@@ -48,14 +105,18 @@ class Cron {
 		self::prize($token);
 	}
 
-	public static function prize($token) {
-        $result = Helper_Http::get(self::SHAR_URL . $token);
-        $result = json_decode($result, true);
-        print_r($result);
-        $result = Helper_Http::get(self::GET_PRIZE . $token);
-        $result = json_decode($result, true);
-        print_r($result);
-    }
+	public static function ms_g1() {
+		self::ms(self::MS_LL_G1);
+	}
+
+	public static function ms_m100() {
+		self::ms(self::MS_LL_M100);
+	}
+
+	public static function main($argv) {
+		call_user_func(array('Cron', $argv[1]));
+	}
+
 }
 
-Cron::start();
+Cron::main($argv);
