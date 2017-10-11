@@ -22,6 +22,9 @@ class Cron {
 	const MS_COOKIE_URL = 'http://221.179.131.140/bjcss-route/forward.do?id=31&token=';
 	const MS_LL_G1 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001145';
 	const MS_LL_M100 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001266';
+	const MS_LL_QUERY = 'http://service.bj.10086.cn/sk2/app/ll/querySkList.action';
+	const MS_PAY_URL = 'http://service.bj.10086.cn/m/orderWap/choosePayChannelSign.action?';
+	const MS_PAY_BJ = 'http://service.bj.10086.cn/paybj/business/com.asiainfo.aipay.web.DoPayAction?action=unifiedSingle';
 
 	static $_ms_cookie = '';
 	static $_token = '';
@@ -80,6 +83,78 @@ class Cron {
 			} while ($i--);
 			sleep(1);
 		} while ($count--);
+
+
+	}
+
+	public static function ll_pay() {
+		$cookie = self::get_ms_cookie();
+		$result = Helper_Http::get(self::MS_LL_QUERY, $cookie);
+		preg_match('/sign=(.*)&orderId=(.*)\'/i', $result, $rt);
+		$param = array(
+			'sign'		=>	$rt[1],
+			'orderId' 	=>	$rt[2]
+		);
+		$need_header = array('Location', 'Set-Cookie');
+		$result = Helper_Http::get_with_header(self::MS_PAY_URL . http_build_query($param), $cookie, $need_header);
+		print_r($need_header);
+		$cookie[0] .= '; ' . trim($need_header['Set-Cookie']);
+
+		$need_header2 = array('Location', 'Set-Cookie');
+		$result = Helper_Http::get_with_header(trim($need_header['Location']), $cookie, $need_header2);
+		print_r($need_header2);
+		$cookie[0] .= '; ' . trim($need_header2['Set-Cookie']);
+
+		$need_header3 = array('Location', 'Set-Cookie');
+		$result = Helper_Http::get_with_header(trim($need_header2['Location']), $cookie, $need_header3);
+		print_r($need_header3);
+		$cookie[0] .= '; ' . trim($need_header3['Set-Cookie']);
+
+
+		$rt = parse_url(trim($need_header3['Location']));
+		parse_str($rt['query'], $arr);
+		$arr['busi'] = urldecode($arr['busi']);
+		$arr['busi'] = urldecode($arr['busi']);
+		$busi = json_decode($arr['busi'], true);
+
+		$arr['pub'] = urldecode($arr['pub']);
+		$arr['pub'] = urldecode($arr['pub']);
+		$pub = json_decode($arr['pub'], true);
+
+		$param = array(
+			'BankId'			=>	'undefined',
+			'PlatId'			=>	$pub['OriginId'],
+			'AccountType'		=>	$busi['AccountType'],
+			'AccountCode'		=>	$busi['AccountCode'],
+			'AccountName'		=>	$busi['AccountName'],
+			'Upg_OrderId'		=>	$busi['upgOrderId'],
+			'PayItemType'		=>	$busi['PayItemType'],
+			'PayAmount'			=>	$busi['PayAmount'],
+			'ProviderId'		=>	'undefined',
+			'ProviderName'		=>	urlencode($busi['ProviderName']),
+			'TransactionId'		=>	$pub['TransactionId'],
+			'RegionId'			=>	$pub['RegionId'],
+			'OriginId'			=>	$pub['OriginId'],
+			'OpenId'			=>	'undefined',
+			'PayNotifyPageURL'	=>	$busi['PayNotifyPageURL'],
+			'PayNotifyIntURL'	=>	$busi['PayNotifyIntURL'],
+		);
+		//var_dump((http_build_query($param)));
+		//var_dump($cookie);
+		//var_dump(self::MS_PAY_BJ);exit;
+		//print_r($param);
+		$result = Helper_Http::post(self::MS_PAY_BJ, http_build_query($param), array(), $cookie);
+		$result = json_decode($result, true);
+
+		$header = array('Referer: http://service.bj.10086.cn/');
+		$str = Helper_Http::get($result['url'], $header);
+		preg_match('/deeplink : "(.*)"/i', $str, $arr);
+		$content = "https://sohow.cc/href.html?r=" . urlencode($arr[1]);
+		$to = "";
+		$subject = "bmcc";
+		$from = "someonelse@example.com";
+		$headers = "From: $from";
+		mail($to,$subject, $content, $headers);
 	}
 
 	public static function sign() {
@@ -120,3 +195,7 @@ class Cron {
 }
 
 Cron::main($argv);
+
+
+
+
