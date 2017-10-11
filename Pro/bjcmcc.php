@@ -84,7 +84,8 @@ class Cron {
 			sleep(1);
 		} while ($count--);
 
-
+		sleep(10);
+		self::ll_pay();
 	}
 
 	public static function ll_pay() {
