@@ -7,7 +7,7 @@
 include_once (dirname(dirname(__FILE__)) . "/Tool/Http.php");
 
 class Cron {
-	const LOGIN_SEC = '3aa4fyj1wSk5hp0XHCtW5hT3rww38F1ZGorjbER6f4ZWKI7I9JcZtrTeqhRQvW5HhWsTpqVOqOOIzkPL7KKwRxNyl/2XJ7EYIr67VMUjfldh1mbq23R6EBYTIfy5zuyUDcywFflzZ719pinEImmw5KLsVomxlr6r/BPyCIAplSopZfTSx0Fe2xlp6p0BYrZjAzcCVjsZcoQBwxc9P7OoV8GzUU6boIs/U8mG/QCJOsaKsVf5Se7pG8WcVbOqmvI0b1iLX4CjwgmDo4jg9QvGR57eeCoptC8X2FF3YAJc6sdH2PcvFi4/4ph1hICAPO2jGKq0Is+mrRyLM3myMmOfLSeJuFNjw1VSqcXOZemPuOCca2I0mH4tNk0DnTvX5XFakcPtYWLb0QgzoYeF4pGsSg==';
+	const LOGIN_SEC = '3aa4fyj1wSk5hp0XHCtW5lLjpo2CqJCxcRZ6m3wX4h2jUNozrfoxnYNdtnJ2M3Y4QW4jxxPTFDyxAi97hg/4O1A2rNvruX12dtf5RhcTXWGMrDzK6BDJNZ4ZWzMUbiwH6++9vmKa2jo9RELHMB9Xlr3gDsYdm3PqSagbqFWc2WltGDRgwV0GojvMukpjslYd0+062rhgCrxWO324P7PHS9gZDf+VWFewXUT17td+5kko1bApthnS6glFIiPmSGPzqjWxizUx/aeGRjmZ5UorUUcv1N0ZdJNQOGNbcFaQY8Wnt0xae0ho+mf/01DOKm7XCYgsnyQ7EAORtoNSCMU8drME0A+ncKHt6+63feE9OHh5di+xNqPh1XlRAmp/JPfsQ2WcH3u8p+kxEI6+mL5muMBVSAw7ZRtJyZn8vFK2RBU=';
 
 	const LOGIN_URL = 'https://mobilebj.cn/app/websitepwdLogin?ver=bjservice_and_5.4.0&ef=';
 	const QUERY_SIGN_URL = 'http://mobilebj.cn:12065/app/querySignInfo?token=';
@@ -25,6 +25,15 @@ class Cron {
 	const MS_LL_QUERY = 'http://service.bj.10086.cn/sk2/app/ll/querySkList.action';
 	const MS_PAY_URL = 'http://service.bj.10086.cn/m/orderWap/choosePayChannelSign.action?';
 	const MS_PAY_BJ = 'http://service.bj.10086.cn/paybj/business/com.asiainfo.aipay.web.DoPayAction?action=unifiedSingle';
+
+
+	const GAME_LL_VALID = 'https://www.17jifen.com/Website/webinterface/validate!validate?redisKey=0.3733831687564939&redisValue=0.5099451103470904';
+	const GAME_MOBILE_ENCODE = 'https://www.17jifen.com/Website/webinterface/businessOrder!encbjmobileSSO?randomnum=0.5099451103470904&redisKey=0.3733831687564939&bju=';
+	const GAME_MOBILE_DECODE = 'https://www.17jifen.com/Website/webinterface/businessOrder!parseBjMobileSso?randomnum=0.5099451103470904&redisKey=0.3733831687564939&bju=';
+	const GAME_PRIZE = 'https://www.17jifen.com/Website/webinterface/exchangePrizes!saveGiftFlowRecord?randomnum=0.5099451103470904&redisKey=0.3733831687564939&bju=';
+	const GAME_PREX_PRIZE = 'https://www.17jifen.com/Website/webinterface/businessOrder!downLoadAppSso?appDownLoad.operateSystem=ANDROID&appDownLoad.appName=%E5%92%AA%E5%92%95%E6%96%97%E5%9C%B0%E4%B8%BB&appDownLoad.channelId=C0000000000&appDownLoad.activityId=A0000000039&randomnum=0.5099451103470904&redisKey=0.3733831687564939&bju=';
+
+	const MOBILE = '13651209691';
 
 	static $_ms_cookie = '';
 	static $_token = '';
@@ -187,6 +196,33 @@ class Cron {
 
 	public static function ms_m100() {
 		self::ms(self::MS_LL_M100);
+	}
+
+	public static function game_ll() {
+		Helper_Http::get(self::GAME_LL_VALID);
+		$result = Helper_Http::get(self::GAME_MOBILE_ENCODE . self::MOBILE);
+		$result = json_decode($result, true);
+		print_r($result);
+
+		$bju = $result['data']['bjMobile'];
+
+		Helper_Http::get(self::GAME_LL_VALID);
+		$result = Helper_Http::get(self::GAME_PREX_PRIZE . $bju);
+		$result = json_decode($result, true);
+		print_r($result);
+
+		Helper_Http::get(self::GAME_LL_VALID);
+		$result = Helper_Http::get(self::GAME_PRIZE . $bju);
+		$result = json_decode($result, true);
+		print_r($result);
+	}
+
+	public static function tool_decode() {
+		Helper_Http::get(self::GAME_LL_VALID);
+		$bju = 'qASBH4Ztuz3GaeQfxroQiA==';
+		$result = Helper_Http::get(self::GAME_MOBILE_DECODE . $bju);
+		$result = json_decode($result, true);
+		print_r($result);
 	}
 
 	public static function main($argv) {
