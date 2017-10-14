@@ -2426,9 +2426,22 @@ if (typeof atob === 'undefined') {
     };
 }
 
+function didi2(ticket) {
+    var exec = require('child_process').exec;
+    var cmd = 'curl -H \'Host: market.bus.xiaojukeji.com\' -H \'Accept: application/json\' -H \'Origin: https://static.galileo.xiaojukeji.com\' -H \'User-Agent: Mozilla/5.0 (Linux; Android 6.0; H60-L11 Build/HDH60-L11; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.105 Mobile Safari/537.36 didi.passenger/5.1.14; FusionKit/2.0.0\' -H \'Content-Type: application/json\' -H \'Referer: https://static.galileo.xiaojukeji.com/static/tms/galileo/z/happyDCoinMVP/index.html?appversion=5.1.14&area=%E5%8C%97%E4%BA%AC%E5%B8%82&channel=780&city_id=1&cityid=1&datatype=1&deviceid=9f80c6cabb703a2c446e7f751e1c32cd&dviceid=9f80c6cabb703a2c446e7f751e1c32cd&imei=864387023969328F0667AE6A7D4E2C37A25D26B12D960C4&lang=zh-CN&lat=40.01969938695027&lng=116.28502886466853&model=H60-L11&os=6.0&phone=O07SrGKI5guRkyxnVrahTw==&platform=1&susig=fc1da0948ec057da9c16e8e021e0e&suuid=C46253E5A48EB98BCCA808EDB0584B1A_780&time=1507957292353&token=ImF-j82-En2c_Cz-rTVaOtJEIdpGFI-K0FW1sRyCW4lUyz0OwjAMgNGroG_2YCdNnPg2hZafqagRYqi4O2JkfnoHMwHCmUgtT9VLzclNvQoLkSZhJY4Tz3mM97YvhBX1XlybCWN77ZeV0I9w_acbgeVaLGmv3RDuBN4U4fEb3wAAAP__&uid=283467563271076&uuid=60A11867153F8C3B28EFCB767B9F1149&vcode=271&activity_id=gj-dbhls--10000-20170911-20200101-1890&transit_channel=gj-dbhlsxxhp--10000-20171012-20200101-2218&token=ImF-j82-En2c_Cz-rTVaOtJEIdpGFI-K0FW1sRyCW4lUyz0OwjAMgNGroG_2YCdNnPg2hZafqagRYqi4O2JkfnoHMwHCmUgtT9VLzclNvQoLkSZhJY4Tz3mM97YvhBX1XlybCWN77ZeV0I9w_acbgeVaLGmv3RDuBN4U4fEb3wAAAP__&0&origin_id=1&utc_offset=480&maptype=soso\' -H \'Accept-Language: zh-CN,en-US;q=0.8\' -H \'X-Requested-With: com.sdu.didi.psnger\' --data-binary \'{"activity_id":"gj-dbhls--10000-20170911-20200101-1890","city_id":"1"}\' --compressed \'https://market.bus.xiaojukeji.com/api/market/dicoin/join?token=';
+    cmd += ticket + '\'';
+    exec(cmd, function(err,stdout,stderr){
+        if(err) {
+            console.log('login didi error:'+stderr);
+        } else {
+            var data = JSON.parse(stdout);
+            console.log('didi2 succ:'+stdout);
+        }
+    });
+}
+
 function didi_login(cmd) {
     var exec = require('child_process').exec;
-    var result = '';
     exec(cmd, function(err,stdout,stderr){
         if(err) {
             console.log('login didi error:'+stderr);
@@ -2437,6 +2450,7 @@ function didi_login(cmd) {
             console.log('login didi succ:'+stdout);
             ticket = data.ticket;
             didi();
+            didi2(ticket);
         }
     });
 }
