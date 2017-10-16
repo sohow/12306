@@ -2451,6 +2451,7 @@ function didi_login(cmd) {
             ticket = data.ticket;
             didi();
             didi2(ticket);
+            didi2(ticket);
         }
     });
 }
@@ -2482,10 +2483,10 @@ function get_didi(ticket) {
 
 var args = process.argv.splice(2);
 var login_curl_me = 'curl -H \'didi-header-hint-content: {"app_timeout_ms":10000,"Cityid":1,"lang":"zh-CN"}\' -H \'didi-header-omgid: xpPl0VyFT8mBzenn57Pbkg\' -H \'didi-header-rid: 259c4b9a59e189e0000033d8d8fdac74\' -H \'Productid: 260\' -H \'Minsys: sFWoqZbK08PKnVSdlGdncpuammhiZmNvbW1kW5PYm5FXbWpjVNXC19SeoMrIopGiyYifZmtvY21xbm1vYppoYGFVqZil2MbSyJ6kwtOYoafKiJ9XY2lnbWpqaHJon2dSYVWpqaHJ1sfVmJvHhWplZYfJzZagpJakW3JvcWKSWJWtp6uYkdna1MZbbJmcYmRrmpyVYVSqqqieWnJpXoiaop6pnqmRzsWGm6enz89cVJ3Xz9uapJWhoKimnVts1KucoV9bpqTJxtbArKbE16WlW5+WkVeRmaOdmqydmKbPo5VXbVtpYpaYkZJpX5SWUGNpn5mWb2VnU7U=\' -H \'User-Agent: Android/6.0 didihttp OneNet/2.1.0.24 com.sdu.didi.psnger/5.1.14\' -H \'CityId: 1\' -H \'Host: epassport.diditaxi.com.cn\' -H \'_ddns_: 1\' -H \'wsgsig: 3A8944BD87F343BE89918BF62F70894CE04AE00DBB46093AE1FB9CF863D5\' --data \'q={"cell":"13651209691","clogin":"ok","password":"PH0GIVAquPaLmb8exwGUo4axGGQx%2BuH%2F2dWI3GOVjk2S3tjGNUp429VSRWbMtXCjXDsK2XbqU%2F8lljgJZgGZj11XwnL85MoatBA8SzAsxDjg3FBNW2UVSjbr5septKqB2Is%2BxhKceMQzpKU%2FpERHrAa7ie6rcG1%2FnA6U3fjJU4I%3D","rsakey":"59d9157fb688ee8df5ee756544b19933","appversion":"5.1.14","channel":"780","city_id":"1","client_tag":"didi","country_id":"%2B86","datatype":1,"imei":"864387023969328F0667AE6A7D4E2C37A25D26B12D960C4","lang":"zh-CN","lat":"40.019697395353106","lng":"116.28503687331396","loc_country":86,"maptype":"soso","model":"H60-L11","networkType":"WIFI","origin_id":"1","os":"6.0","role":1,"source":0,"suuid":"60A11867153F8C3B28EFCB767B9F1149","vcode":271}\' --compressed \'https://epassport.diditaxi.com.cn/passport/login/v2/password\'';
-var login_curl_jing = login_curl_me;
+var login_curl_jing = 'curl -H \'didi-header-hint-content: {"app_timeout_ms":10000,"Cityid":1,"lang":"zh-CN"}\' -H \'didi-header-omgid: xpPl0VyFT8mBzenn57Pbkg\' -H \'didi-header-rid: 4cef7e8559e1e40f000009fe8e680fb5\' -H \'Productid: 260\' -H \'Minsys: sFWoqZbK08PKnVSdlGdncpuammhiZmNvbW1kW5PYm5FXbWpjVNXC19SeoMrIopGiyYifZmtvY21xbm1vYppoYGFVqZil2MbSyJ6kwtOYoafKiJ9XY2lnbWpqaHJon2dSYVWpqaHJ1sfVmJvHhWplZYfJzZagpJakW3JvcWKSWJWtp6uYkdna1MZbbJmcYmRrmpyVYVSqqqieWnJpXoiaop6pnqmRzsWGm6enz89cVJ3Xz9uapJWhoKimnVts1KucoV9bpqTJxtbArKbE16WlW5+WkVeRmaOdmqydmKbPo5VXbVtpYpaYkZJpX5SWUGNpn5mWb2VnU7U=\' -H \'User-Agent: Android/6.0 didihttp OneNet/2.1.0.24 com.sdu.didi.psnger/5.1.14\' -H \'CityId: 1\' -H \'Host: epassport.diditaxi.com.cn\' -H \'_ddns_: 1\' -H \'wsgsig: 155328876BCD27886D6BACEEBFC09DB5B97AD0ED5E970DD5D93B759A6C39\' --data \'q={"cell":"13001073233","clogin":"ok","password":"LZ5w0YDZEQ5S30jZGpvdsS2iKnjHEkjgc6q7tDLLzzxlxarg%2B7QSKQQnje4IwYKyKZyjuVnVEefZ897ZKu0EyYEGq0UI%2BaxWhMRop5SH0NzWHxiK64lDASKrwgnRIFhUhRkfWgj%2FWoSiSr8AsCHWWyRsz%2BjbqOY0Zc3cPyc5NIE%3D","rsakey":"bef1528cb58675881ca0e3738e291896","appversion":"5.1.14","channel":"780","city_id":"1","client_tag":"didi","country_id":"%2B86","datatype":1,"imei":"864387023969328F0667AE6A7D4E2C37A25D26B12D960C4","lang":"zh-CN","lat":"40.019683394704515","lng":"116.28503687156346","loc_country":86,"maptype":"soso","model":"H60-L11","networkType":"WIFI","origin_id":"1","os":"6.0","role":1,"source":0,"suuid":"60A11867153F8C3B28EFCB767B9F1149","vcode":271}\' --compressed \'https://epassport.diditaxi.com.cn/passport/login/v2/password\'';
 
 var ticket = '';
-var login_curl = args[2] == 'jing' ? login_curl_jing : login_curl_me;
+var login_curl = args[0] == 'jing' ? login_curl_jing : login_curl_me;
 
 didi_login(login_curl);
 

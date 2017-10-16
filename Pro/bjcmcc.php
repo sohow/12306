@@ -20,6 +20,7 @@ class Cron {
     const GET_PRIZE = 'http://sc.bj.chinamobile.com/rwtx/task!doPrize.do?token=';
 
 	const MS_COOKIE_URL = 'http://221.179.131.140/bjcss-route/forward.do?id=31&token=';
+	const MS_LL_BAOMING = 'http://service.bj.10086.cn/sk2/app/ll/preSignUp.action';
 	const MS_LL_G1 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001145';
 	const MS_LL_M100 = 'http://service.bj.10086.cn/sk2/app/ll/sk.action?aid=1001266';
 	const MS_LL_QUERY = 'http://service.bj.10086.cn/sk2/app/ll/querySkList.action';
@@ -101,6 +102,9 @@ class Cron {
 		$cookie = self::get_ms_cookie();
 		$result = Helper_Http::get(self::MS_LL_QUERY, $cookie);
 		preg_match('/sign=(.*)&orderId=(.*)\'/i', $result, $rt);
+		if (empty($rt)) {
+			echo "no to pay\n";return;
+		}
 		$param = array(
 			'sign'		=>	$rt[1],
 			'orderId' 	=>	$rt[2]
@@ -188,6 +192,13 @@ class Cron {
 		}
 
 		self::prize($token);
+	}
+
+	public static function ms_baoming() {
+		$cookie = self::get_ms_cookie();
+		$result = Helper_Http::get(self::MS_LL_BAOMING, $cookie);
+		$result = json_decode($result, true);
+		print_r($result);
 	}
 
 	public static function ms_g1() {
