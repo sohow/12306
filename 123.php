@@ -177,15 +177,16 @@ class train {
 
     public static function waring($msg)
     {
-        $os = strtolower(PHP_OS);
-        if($os == "darwin"){
-            exec('osascript -e \'display notification "'.$msg.'" sound name "Glass.aiff" with title "有票啦"\'');
-        }elseif($os == "linux"){
-            exec("gnome-terminal -x bash -c \"date;echo 有票啦 {$msg}; read;\"");
-        }
-        else {
-            var_dump("有票啦 {$msg}");
-        }
+		$os = strtolower(PHP_OS);
+		exec('type gnome-terminal', $out, $return_var);
+		if ($os == "darwin") {
+			exec('osascript -e \'display notification "' . $msg . '" sound name "Glass.aiff" with title "有票啦"\'');
+		} elseif ($os == "linux" && !empty($out)) {
+			exec("gnome-terminal -x bash -c \"date;echo 有票啦 {$msg}; read;\"");
+		} else {
+			var_dump("有票啦 {$msg}");
+		}
+
         exit;
     }
 
