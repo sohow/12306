@@ -59,7 +59,7 @@ class Helper_Http
 			foreach ($needheader as $h) {
 				$tmp[$h] = '';
 				preg_match_all('/'.$h.':(.*)/i', $header, $str);
-				if (!empty($str[1])) {
+				if (isset($str[1]) && !empty($str[1])) {
 					if ($h == 'Set-Cookie') {
 						foreach ($str[1] as $cookie) {
 							$c = explode('; ', $cookie);
